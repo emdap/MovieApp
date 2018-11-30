@@ -17,6 +17,9 @@ export async function runWithDelay (movieData, delay) {
 				// clean up the response with only needed attributes
 				var cleanedUp = tidyMovieObj(response)
 				resolve(cleanedUp)
+			}).catch((response) => {
+				console.log(response)
+				reject(response)
 			})
 		}, delay)
 	})
