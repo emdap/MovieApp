@@ -1,6 +1,6 @@
 <template>
   <div>
-    <b-dropdown id="ddown1" text="Dropdown Button" class="m-md-2">
+    <b-dropdown id="catDrop" :text="activeCategory" class="m-md-2">
       <b-dropdown-item v-for="(category, index) in $store.state.movieCategories" :key="index" @click="setActiveCat(category.id)" 
       :class="{'active' : category.active}">
         {{category.category}}
@@ -21,6 +21,13 @@ export default {
       expanded: false
     }
   },
+  computed: {
+    activeCategory: function () {
+      return this.$store.state.movieCategories.find((x) => {
+        return x.active
+      }).category
+    }
+  },
   methods: {
     setActiveCat (catId) {
       this.$store.commit('setActiveCategory', catId)
@@ -29,6 +36,6 @@ export default {
 }
 </script>
 
-<!-- Add "scoped" attribute to limit CSS to this component only -->
 <style scoped>
+/* bootstrap buttons/dropdown has styling in App.vue */
 </style>

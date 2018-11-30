@@ -1,7 +1,5 @@
 <template>
-  <div class="posterHolder" :id="'movie' + movie.id" @click="openDetails">
-    <img :src="movie.posterURL">
-  </div>
+  <img class="poster" :id="'movie' + movie.id" @click="openDetails" :src="movie.posterURL">
 </template>
 
 
@@ -21,8 +19,11 @@ export default {
 }
 </script>
 
-<!-- Add "scoped" attribute to limit CSS to this component only -->
 <style scoped>
+.poster {
+  display: inline-block;
+  width: 50vw;
+}
 h3 {
   margin: 40px 0 0;
 }
@@ -37,4 +38,5 @@ li {
 a {
   color: #42b983;
 }
+
 </style>

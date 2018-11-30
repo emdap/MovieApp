@@ -1,16 +1,24 @@
 <template>
   <div id="app">
-    <DetailScreen v-if="$store.state.showDetails">
-    </DetailScreen>
 
-    <CategoryDropdown v-else>
-    </CategoryDropdown>
+    <b-button v-if="$store.state.showDetails" @click="$store.commit('toggleDetails')" key="closeDetails">
+      <div class="box">
+        <img id="backArrow" src="@/assets/back_arrow.png">
+        Movie Detail
+      </div>
+    </b-button>
 
-    <MoviePoster v-for="(movie, index) in activeCategory.movies" :key="index" :movie="movie">
-    </MoviePoster>
-    <span v-if="activeCategory.movies.length === 0">
-      No movies here yet :(
-    </span>
+    <CategoryDropdown v-else key="changeCategory"/>
+
+    <DetailScreen/>
+
+    <div id="posterHolder">
+      <MoviePoster v-for="(movie, index) in activeCategory.movies" :key="index" :movie="movie"/>
+      <div class="noMovie" v-if="activeCategory.movies.length === 0">
+        No movies here yet :(
+      </div>
+    </div>
+
   </div>
 </template>
 
@@ -42,23 +50,60 @@ export default {
 </script>
 
 <style>
-#app {
-  font-family: 'Avenir', Helvetica, Arial, sans-serif;
-  -webkit-font-smoothing: antialiased;
-  -moz-osx-font-smoothing: grayscale;
+
+/* affects all bootstrap buttons in app */
+
+.btn {
+  width: 100vw;
+  margin: 0;
+  border-radius: 0;
+  text-align: left;
+  background-color: rgb(33, 33, 33);
+  border-color: rgb(30, 30, 30);
+  font-weight: bolder;
+  height: 2.5rem;
+  z-index: 9999;
+}
+
+.show > .btn-secondary.dropdown-toggle {
+  background-color: rgb(60, 60, 60) !important;
+  border-color: rgb(57, 57, 57) !important;
+}
+
+.dropdown-menu {
+  border-top-left-radius: 0;
+  border-top-right-radius: 0;
+  margin-top: -1px;
+  margin-left: -5px;
+  width: 100%;
+}
+
+#posterHolder {
+  position: relative;
+  height: calc(100vh - 2.5rem);
+  width: 100vw;
+  overflow: auto;
+  z-index: 2;
+}
+
+.noMovie {
   text-align: center;
-  color: #2c3e50;
-}
-#nav {
-  padding: 30px;
-}
-
-#nav a {
+  margin-top: 10px;
   font-weight: bold;
-  color: #2c3e50;
+  color: grey;
 }
 
-#nav a.router-link-exact-active {
-  color: #42b983;
+#backArrow {
+  margin-right: 10px;
+}
+
+.box {
+   display: flex;
+   align-items:center;
+}
+
+#app {
+  width: 100vw;
+  overflow-x: hidden;
 }
 </style>
