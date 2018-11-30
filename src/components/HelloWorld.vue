@@ -6,7 +6,9 @@
       check out the
       <a href="https://cli.vuejs.org" target="_blank" rel="noopener">vue-cli documentation</a>.
     </p>
-    <h3>Installed CLI Plugins</h3>
+    <h3>Installed CLI Plugins
+    {{test}}
+    </h3>
     <ul>
       <li><a href="https://github.com/vuejs/vue-cli/tree/dev/packages/%40vue/cli-plugin-babel" target="_blank" rel="noopener">babel</a></li>
       <li><a href="https://github.com/vuejs/vue-cli/tree/dev/packages/%40vue/cli-plugin-eslint" target="_blank" rel="noopener">eslint</a></li>
@@ -31,12 +33,37 @@
   </div>
 </template>
 
+
 <script>
+
+import { API_KEY } from '@/../config'
+import axios from 'axios'
+
 export default {
   name: 'HelloWorld',
   props: {
     msg: String
+  },
+  data () {
+    return {
+      test: ''
+    }
+  },
+  mounted () {
+    console.log(API_KEY)
+    console.log(this.$store.state.activeMovies)
+    this.test = this.$store.state.activeMovies
+    // this.testData()
   }
+  // ,
+  // methods: {
+  //   async testData () {
+  //     // const test = await this.$store.initApp()
+  //     if (test.data) {
+  //       console.log(test)
+  //     }
+  //   }
+  // }
 }
 </script>
 

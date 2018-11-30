@@ -8,6 +8,30 @@
   </div>
 </template>
 
+<script>
+
+import MoviePoster from '@/components/MoviePoster'
+
+export default {
+  name: 'App',
+  components: {
+    MoviePoster
+  },
+  // computed: {
+  //   displaySignIn() {
+  //     return this.$store.state.displaySignIn
+  //   },
+  //   displayError() {
+  //     return this.$store.state.error
+  //   }
+  // },
+  beforeCreate() {
+    this.$store.dispatch('initMovieData')
+  }
+}
+
+</script>
+
 <style>
 #app {
   font-family: 'Avenir', Helvetica, Arial, sans-serif;
