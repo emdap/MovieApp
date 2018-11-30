@@ -8,91 +8,169 @@ Vue.use(Vuex)
 
 export default new Vuex.Store({
   state: {
-  	activeMovieDetails: {},
+  	activeDetails: {},
   	showDetails: false,
-  	popularMovies: [],
-  	topRatedMovies: [],
-  	favoriteMovies: [],
-  	activeMovies: [],
-  	movieCategories: ['Popular Movies', 'Top Rated Movies', 'Favorite Movies']
+  	// popularMovies: {
+  	// 	categoryId: 1,
+  	// 	movies: []
+  	// },
+  	// topRatedMovies: {
+  	// 	categoryId: 2,
+  	// 	movies: []
+  	// },
+  	// favoriteMovies: {
+  	// 	categoryId: 3,
+  	// 	movies: []
+  	// },
+  	// activeCategory: {
+  	// 	id: Number,
+  	// 	movies: Array
+  	// },
+  	movieCategories: [
+	  	{id: 1, category: 'Popular Movies', active: true, movies: []}, 
+	  	{id: 2, category: 'Top Rated Movies', active: false, movies: []}, 
+	  	{id: 3, category: 'Favorite Movies', active: false, movies: []}
+  	]
   },
   mutations: {
-  	setActiveMovies: (state, category) => {
-  		if (category == 'Popular Movies') {
-  			state.activeMovies = state.popularMovies
-  		} else if (category == 'Top Rated Movies') {
-  			state.activeMovies = state.topRatedMovies
-  		}
+  	setActiveCategory: (state, categoryId) => {
+  		// state.movieCategories.filter((x) => {
+  		// 	if (x.id === categoryId) {
+  		// 		x.active = true
+  		// 	} else {}
+  		// 	return x.id === categoryId
+  		// })[0]
+  		state.movieCategories.map(x => {
+  			if (x.id === categoryId) {
+  				x.active = true
+  			} else {
+  				x.active = false
+  			}
+  		})
   	},
-  	setActiveDetails: (state, movieId) => {
+  	setActiveDetails: (state, movie) => {
   		// can only click on posters that are shown to the user, and these posters come from activeMovies
   		// search for movie ID in that list
-  		console.log(movieId)
- 			state.activeMovieDetails = state.activeMovies.filter((x) => {
- 				return x.id === movieId
- 			})[0]
- 			console.log(state.activeMovieDetails)
+ 			state.activeDetails = movie
+ 			console.log(state.activeDetails)
   	},
   	toggleDetails: (state) => {
   		state.showDetails = !state.showDetails
   	},
+  	pushMovieList: (state, payload) => {
+  		const catId = payload.categoryId
+  		const movieList = payload.movies
 
+  		let pushTo = state.movieCategories.filter((x) => {
+  			return x.id === catId
+  		})[0]
+
+  		for (var m in movieList) {
+  			pushTo.movies.push(movieList[m])
+  		}
+  	},
+  	pushMovie: (state, payload) => {
+  		const catId = payload.categoryId
+  		const movie = payload.movie
+
+  		let pushTo = state.movieCategories.filter((x) => {
+  			return x.id === catId
+  		})[0]
+
+  		pushTo.movies.push(movie)
+  	},
   	// for some reason, using concat is not updating store references?
   	// so weird push instead
-  	pushPopularMovies: (state, movieData) => {
-  		for (var m in movieData) {
-	  		state.popularMovies.push(movieData[m])
-  		}
+  	// pushPopularMovies: (state, movieList) => {
+  	// 	for (var m in movieList) {
+	  // 		state.popularMovies.push(movieList[m])
+  	// 	}
+  	// },
+  	// pushTopRatedMovies: (state, movieList) => {
+  	// 	for (var m in movieList) {
+	  // 		state.topRatedMovies.push(movieList[m])
+  	// 	}
+  	// },
+  	pushFavoriteMovie: (state, movie) => {
+  		// although safe to assume that the movie that had this button pushed
+  		// is the activeDetails, passing it a movie obj instead
+  		// as that would be easier to adjust to diff features in future
+  		// (what if we want to add to favorites from outside the detail view?)
+  		const favoriteMovies = state.movieCategories.filter((x) => {
+  			return x.id === 3
+  		})[0]
+  		favoriteMovies.movies.push(movie)
+  		movie.favorite = true
   	},
-  	pushTopRatedMovies: (state, movieData) => {
-  		for (var m in movieData) {
-	  		state.topRatedMovies.push(movieData[m])
-  		}
-  	},
-  	pushFavoriteMovie: (state) => {
-  		// this one is coming from user hitting 'add to favorites'
-  		// is passed movieId, lookup full data and push it
-  		// can only add movie to favorites if it's the movie in detail view, ref that obj
-  		state.favoriteMovies.push(state.activeDetails)
+  	removeFavoriteMovie: (state, movie) => {
+  		movie.favorite = false
+
+  		const favoriteMovies = state.movieCategories.filter((x) => {
+  			return x.id === 3
+  		})[0]
+  		favoriteMovies.movies = favoriteMovies.movies.filter((x) => {
+  			return x.favorite
+  		})
   	}
   },
   actions: {
+  	// TODO: clean this up
+  	// use .map to generate the URLs
+  	// generalize the runWithDelay function
+  	// and send it EVERYTHING, including that first request to get IDs? or maybe except for that one since subsequent calls need that info
+  	// could make it smarter, do that first call, then splice off up to the returned rate limit, and run all those
+  	// then use that response with when the api will be available to create a time delay until then?
   	initMovieData ({commit}) {
   		// when starting the app, want to set the active list to popular movies so user sees that first
   		// and fetch the movies of course
-  		commit('setActiveMovies', 'Popular Movies')
-
+  		commit('setActiveCategory', 1)
 
   		// TODO: make more generic 'runWithDelay' function so that I can send the top_rated request there
   		// instead of delaying it 4000ms
   		// also having a better way to iterate these 2 starting API calls would be better, this is messy
 
-
+			let delay = 0
   		// fetch one page for popular and one page for top rated to start
   		axios.get('http://api.themoviedb.org/3/movie/popular?api_key=' + API_KEY).then((response) => {
-  			let delay = 0
   			for (var m in response.data.results) {
   				// only want to run 4 requests per second, splice off top 4
   				let curSet = response.data.results.splice(0, 4)
   				// runWithDelay will return a promise and wait for 'delay' before resolving
   				runWithDelay(curSet, delay).then((response) => {
-  					commit('pushPopularMovies', response)
+  					console.log('popular movies runWithDelay')
+  					const popMovies = {
+  						categoryId: 1,
+  						movies: response
+  					}
+  					commit('pushMovieList', popMovies)
+  				}).catch((response) => {
+  					console.log(response)
   				})
   				// increment delay
   				delay += 1000
   			}
+				console.log(delay)
+	  		setTimeout(function () {axios.get('http://api.themoviedb.org/3/movie/top_rated?api_key=' + API_KEY).then((response) => {
+	  			let delay = 0
+	  			for (var m in response.data.results) {
+	  				let curSet = response.data.results.splice(0, 4)
+	  				runWithDelay(curSet, delay).then((response) => {
+	  					console.log('top rated runWithDelay')
+	  					const topMovies = {
+	  						categoryId: 2,
+	  						movies: response
+	  					}
+	  					commit('pushMovieList', topMovies)
+	  				}).catch((response) => {
+	  					console.log(response)
+	  				})
+	  				delay += 1000
+	  			}
+	  		})}, delay)
+  		}).catch((response) => {
+  			console.log(response)
   		})
-
-  		setTimeout(function () {axios.get('http://api.themoviedb.org/3/movie/top_rated?api_key=' + API_KEY).then((response) => {
-  			let delay = 0
-  			for (var m in response.data.results) {
-  				let curSet = response.data.results.splice(0, 4)
-  				runWithDelay(curSet, delay).then((response) => {
-  					commit('pushTopRatedMovies', response)
-  				})
-  				delay += 1000
-  			}
-  		})}, 4000)
+  		
 
   	}
   }

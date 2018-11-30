@@ -1,6 +1,6 @@
 <template>
   <div class="detailHolder" id="details">
-    <slot name="thumbnail">
+    <slot name="thumbImg">
     </slot>
     <slot name="title">
     </slot>
@@ -10,8 +10,11 @@
     </slot>
     <slot name="release">
     </slot>
-    <button @click="addFav">
+    <button v-if="!$store.state.activeDetails.favorite" @click="addFav">
       Add to favorites
+    </button>
+    <button v-else="!$store.state.activeDetails.favorite" @click="removeFav">
+      Remove from favorites
     </button>
     <button @click="$store.commit('toggleDetails')">
       Back
@@ -24,12 +27,15 @@
 
 export default {
   name: 'DetailScreen',
-  props: {
-    movieId: Number
-  },
+  // props: {
+  //   movie: Object
+  // },
   methods: {
     addFav () {
-      this.$store.commit('pushFavoriteMovie')
+      this.$store.commit('pushFavoriteMovie', this.$store.state.activeDetails)
+    },
+    removeFav () {
+      this.$store.commit('removeFavoriteMovie', this.$store.state.activeDetails)
     }
   }
 }

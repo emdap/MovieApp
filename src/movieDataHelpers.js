@@ -32,6 +32,7 @@ export async function runWithDelay (movieData, delay) {
 
 function tidyMovieObj (rawResponse) {
 	const tidyObjs = []
+	// loop through and set data the app needs
 	for (var r in rawResponse) {
 		let tempMovie = rawResponse[r].data
 		let newMovie = {
@@ -41,7 +42,8 @@ function tidyMovieObj (rawResponse) {
 			rating: tempMovie.vote_average,
 			releaseDate: tempMovie.release_date,
 			posterURL: baseURL + 'w185/' + tempMovie.poster_path,
-			thumbURL: baseURL + 'w92/' + tempMovie.poster_path
+			thumbURL: baseURL + 'w92/' + tempMovie.poster_path,
+			favorite: false
 		}
 		tidyObjs.push(newMovie)
 	}

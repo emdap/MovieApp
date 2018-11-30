@@ -1,7 +1,6 @@
 <template>
-  <div class="posterHolder" :id="'movie' + movieId" @click="openDetails">
-    <slot name="posterImg">
-    </slot>
+  <div class="posterHolder" :id="'movie' + movie.id" @click="openDetails">
+    <img :src="movie.posterURL">
   </div>
 </template>
 
@@ -11,12 +10,11 @@
 export default {
   name: 'MoviePoster',
   props: {
-    movieId: Number
+    movie: Object
   },
   methods: {
     openDetails () {
-      console.log('here')
-      this.$store.commit('setActiveDetails', this.movieId)
+      this.$store.commit('setActiveDetails', this.movie)
       this.$store.commit('toggleDetails')
     }
   }

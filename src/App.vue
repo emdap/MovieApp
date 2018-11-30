@@ -1,23 +1,29 @@
 <template>
   <div id="app">
-    <MoviePoster v-for="(movie, index) in $store.state.activeMovies" :key="index" :movieId="movie.id">
-      <img slot="posterImg" :src="movie.posterURL">
-    </MoviePoster>
-    <DetailScreen v-if="$store.state.showDetails">
-      <img slot="thumbImg" :src="$store.state.activeMovieDetails.thumbURL">
+     <DetailScreen v-if="$store.state.showDetails">
+      <img slot="thumbImg" :src="$store.state.activeDetails.thumbURL">
       <h1 slot="title">
-        {{$store.state.activeMovieDetails.originalTitle}}
+        {{$store.state.activeDetails.originalTitle}}
       </h1>
       <h2 slot="overview">
-        {{$store.state.activeMovieDetails.overview}}
+        {{$store.state.activeDetails.overview}}
       </h2>
       <h3 slot="rating">
-        {{$store.state.activeMovieDetails.rating}}
+        {{$store.state.activeDetails.rating}}
       </h3>
       <h4 slot="release">
-        {{$store.state.activeMovieDetails.releaseDate}}
+        {{$store.state.activeDetails.releaseDate}}
       </h4>
     </DetailScreen>
+
+    <CategoryDropdown v-else>
+    </CategoryDropdown>
+
+    <MoviePoster v-for="(movie, index) in activeCategory.movies" :key="index" :movie="movie">
+    </MoviePoster>
+    <span v-if="activeCategory.movies.length === 0">
+      No movies here yet :(
+    </span>
   </div>
 </template>
 
@@ -25,12 +31,23 @@
 
 import MoviePoster from '@/components/MoviePoster'
 import DetailScreen from '@/components/DetailScreen'
+import CategoryDropdown from '@/components/CategoryDropdown'
 
 export default {
   name: 'App',
   components: {
     MoviePoster,
-    DetailScreen
+    DetailScreen,
+    CategoryDropdown
+  },
+  computed: {
+    activeCategory: function () {
+      const active = this.$store.state.movieCategories.filter((x) => {
+        return x.active
+      })[0]
+      console.log(active)
+      return active
+    } 
   },
   // computed: {
   //   displaySignIn() {
