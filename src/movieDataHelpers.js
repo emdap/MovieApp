@@ -1,6 +1,11 @@
 import { API_KEY } from '@/../config'
 import axios from 'axios'
 
+// so there is a way to get this, see ImageApi.js, but I was conceiving of its use wrong
+// so hard coding it here 
+// TODO: cache this by grabbing the actual URL
+const baseURL = 'http://image.tmdb.org/t/p/'
+
 export async function runWithDelay (movieData, delay) {
 	// create new promise
 	var promise = new Promise(function(resolve, reject) {
@@ -29,14 +34,14 @@ function tidyMovieObj (rawResponse) {
 	const tidyObjs = []
 	for (var r in rawResponse) {
 		let tempMovie = rawResponse[r].data
-		console.log(tempMovie)
 		let newMovie = {
 			id: tempMovie.id,
 			originalTitle: tempMovie.original_title,
 			overview: tempMovie.overview,
 			rating: tempMovie.vote_average,
 			releaseDate: tempMovie.release_date,
-			filePath: tempMovie.poster_path
+			posterURL: baseURL + 'w185/' + tempMovie.poster_path,
+			thumbURL: baseURL + 'w92/' + tempMovie.poster_path
 		}
 		tidyObjs.push(newMovie)
 	}

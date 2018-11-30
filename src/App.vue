@@ -1,21 +1,36 @@
 <template>
   <div id="app">
-    <div id="nav">
-      <router-link to="/">Home</router-link> |
-      <router-link to="/about">About</router-link>
-    </div>
-    <router-view/>
+    <MoviePoster v-for="(movie, index) in $store.state.activeMovies" :key="index" :movieId="movie.id">
+      <img slot="posterImg" :src="movie.posterURL">
+    </MoviePoster>
+    <DetailScreen v-if="$store.state.showDetails">
+      <img slot="thumbImg" :src="$store.state.activeMovieDetails.thumbURL">
+      <h1 slot="title">
+        {{$store.state.activeMovieDetails.originalTitle}}
+      </h1>
+      <h2 slot="overview">
+        {{$store.state.activeMovieDetails.overview}}
+      </h2>
+      <h3 slot="rating">
+        {{$store.state.activeMovieDetails.rating}}
+      </h3>
+      <h4 slot="release">
+        {{$store.state.activeMovieDetails.releaseDate}}
+      </h4>
+    </DetailScreen>
   </div>
 </template>
 
 <script>
 
 import MoviePoster from '@/components/MoviePoster'
+import DetailScreen from '@/components/DetailScreen'
 
 export default {
   name: 'App',
   components: {
-    MoviePoster
+    MoviePoster,
+    DetailScreen
   },
   // computed: {
   //   displaySignIn() {

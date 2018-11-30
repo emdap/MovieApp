@@ -24,12 +24,14 @@ export default new Vuex.Store({
   			state.activeMovies = state.topRatedMovies
   		}
   	},
-  	setActiveDetails: (state, movieID) => {
+  	setActiveDetails: (state, movieId) => {
   		// can only click on posters that are shown to the user, and these posters come from activeMovies
   		// search for movie ID in that list
- 			state.activeDetails = state.activeMovies.filter((x) => {
- 				return x.ID === movieID
+  		console.log(movieId)
+ 			state.activeMovieDetails = state.activeMovies.filter((x) => {
+ 				return x.id === movieId
  			})[0]
+ 			console.log(state.activeMovieDetails)
   	},
   	toggleDetails: (state) => {
   		state.showDetails = !state.showDetails
@@ -47,10 +49,11 @@ export default new Vuex.Store({
 	  		state.topRatedMovies.push(movieData[m])
   		}
   	},
-  	pushFavoriteMovies: (state, movieData) => {
-  		for (var m in movieData) {
-	  		state.favoriteMovies.push(movieData[m])
-  		}
+  	pushFavoriteMovie: (state) => {
+  		// this one is coming from user hitting 'add to favorites'
+  		// is passed movieId, lookup full data and push it
+  		// can only add movie to favorites if it's the movie in detail view, ref that obj
+  		state.favoriteMovies.push(state.activeDetails)
   	}
   },
   actions: {
