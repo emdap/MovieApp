@@ -19,15 +19,6 @@ export default {
       this.$store.commit('toggleDetails')
     }
   }
-  // ,
-  // methods: {
-  //   async testData () {
-  //     // const test = await this.$store.initApp()
-  //     if (test.data) {
-  //       console.log(test)
-  //     }
-  //   }
-  // }
 }
 </script>
 
