@@ -102,7 +102,8 @@ export default new Vuex.Store({
       // increment delay +1 second every time 4 requests are sent
       // or one request every .25 seconds
       // start delay off at 250 since sending 1 request before we start splicing off subsequent requests
-      let delay = 250
+      // oh and I know each api request is giving me 20 results back, so confident it is divisible by 4
+      var delay = 250
 
       // first request, get movie IDs for popular movies, since this is the first screen shown
       axios.get('http://api.themoviedb.org/3/movie/popular?api_key=' + API_KEY).then((response) => {
@@ -110,6 +111,7 @@ export default new Vuex.Store({
           // splice off first 4 requests to run
           let curSet = response.data.results.splice(0, 4)
           // runWithDelay will return a promise and timeout for 'delay' before resolving
+          console.log(delay)
           runWithDelay(curSet, delay).then((response) => {
             // create payload so that pushMovieList knows which list to push to
             // (id 1 is popular movies)
@@ -120,16 +122,18 @@ export default new Vuex.Store({
             commit('pushMovieList', popMovies)
           }).catch((response) => {
             console.log(response)
-          })
+          }) 
           // increment delay
           delay += 1000
         }
+        // need to set additional buffer or else get timeout, but not sure why?
+        delay += 500
         // this next timeout will run once the current delay is up, so after all popular movie details are retrieved
-        setTimeout(function () {axios.get('http://api.themoviedb.org/3/movie/top_rated?api_key=' + API_KEY).then((response) => {
-          // reset delay since this won't be running until above runWithDelays have all finished
-          // due to this whole block being delayed
-          let delay = 250
+        setTimeout(function () {
+          axios.get('http://api.themoviedb.org/3/movie/top_rated?api_key=' + API_KEY).then((response) => {
+          delay = 250
           while (response.data.results.length) {
+            console.log(delay)
             let curSet = response.data.results.splice(0, 4)
             runWithDelay(curSet, delay).then((response) => {
               // id 2 is top rated movies
