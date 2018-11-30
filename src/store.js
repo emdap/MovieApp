@@ -10,22 +10,6 @@ export default new Vuex.Store({
   state: {
   	activeDetails: {},
   	showDetails: false,
-  	// popularMovies: {
-  	// 	categoryId: 1,
-  	// 	movies: []
-  	// },
-  	// topRatedMovies: {
-  	// 	categoryId: 2,
-  	// 	movies: []
-  	// },
-  	// favoriteMovies: {
-  	// 	categoryId: 3,
-  	// 	movies: []
-  	// },
-  	// activeCategory: {
-  	// 	id: Number,
-  	// 	movies: Array
-  	// },
   	movieCategories: [
 	  	{id: 1, category: 'Popular Movies', active: true, movies: []}, 
 	  	{id: 2, category: 'Top Rated Movies', active: false, movies: []}, 
@@ -34,12 +18,6 @@ export default new Vuex.Store({
   },
   mutations: {
   	setActiveCategory: (state, categoryId) => {
-  		// state.movieCategories.filter((x) => {
-  		// 	if (x.id === categoryId) {
-  		// 		x.active = true
-  		// 	} else {}
-  		// 	return x.id === categoryId
-  		// })[0]
   		state.movieCategories.map(x => {
   			if (x.id === categoryId) {
   				x.active = true
@@ -48,22 +26,13 @@ export default new Vuex.Store({
   			}
   		})
   	},
-  	setActiveDetails: (state, movie) => {
-  		// can only click on posters that are shown to the user, and these posters come from activeMovies
-  		// search for movie ID in that list
- 			state.activeDetails = movie
- 			console.log(state.activeDetails)
-  	},
-  	toggleDetails: (state) => {
-  		state.showDetails = !state.showDetails
-  	},
   	pushMovieList: (state, payload) => {
   		const catId = payload.categoryId
   		const movieList = payload.movies
 
-  		let pushTo = state.movieCategories.filter((x) => {
+  		let pushTo = state.movieCategories.find((x) => {
   			return x.id === catId
-  		})[0]
+  		})
 
   		for (var m in movieList) {
   			pushTo.movies.push(movieList[m])
@@ -73,44 +42,40 @@ export default new Vuex.Store({
   		const catId = payload.categoryId
   		const movie = payload.movie
 
-  		let pushTo = state.movieCategories.filter((x) => {
+  		let pushTo = state.movieCategories.find((x) => {
   			return x.id === catId
-  		})[0]
+  		})
 
   		pushTo.movies.push(movie)
   	},
-  	// for some reason, using concat is not updating store references?
-  	// so weird push instead
-  	// pushPopularMovies: (state, movieList) => {
-  	// 	for (var m in movieList) {
-	  // 		state.popularMovies.push(movieList[m])
-  	// 	}
-  	// },
-  	// pushTopRatedMovies: (state, movieList) => {
-  	// 	for (var m in movieList) {
-	  // 		state.topRatedMovies.push(movieList[m])
-  	// 	}
-  	// },
   	pushFavoriteMovie: (state, movie) => {
   		// although safe to assume that the movie that had this button pushed
   		// is the activeDetails, passing it a movie obj instead
   		// as that would be easier to adjust to diff features in future
   		// (what if we want to add to favorites from outside the detail view?)
-  		const favoriteMovies = state.movieCategories.filter((x) => {
+  		const favoriteMovies = state.movieCategories.find((x) => {
   			return x.id === 3
-  		})[0]
+  		})
   		favoriteMovies.movies.push(movie)
   		movie.favorite = true
   	},
   	removeFavoriteMovie: (state, movie) => {
   		movie.favorite = false
 
-  		const favoriteMovies = state.movieCategories.filter((x) => {
+  		const favoriteMovies = state.movieCategories.find((x) => {
   			return x.id === 3
-  		})[0]
+  		})
   		favoriteMovies.movies = favoriteMovies.movies.filter((x) => {
   			return x.favorite
   		})
+  	},
+   	setActiveDetails: (state, movie) => {
+  		// can only click on posters that are shown to the user, and these posters come from activeMovies
+  		// search for movie ID in that list
+ 			state.activeDetails = movie
+  	},
+  	toggleDetails: (state) => {
+  		state.showDetails = !state.showDetails
   	}
   },
   actions: {
@@ -149,7 +114,6 @@ export default new Vuex.Store({
   				// increment delay
   				delay += 1000
   			}
-				console.log(delay)
 	  		setTimeout(function () {axios.get('http://api.themoviedb.org/3/movie/top_rated?api_key=' + API_KEY).then((response) => {
 	  			let delay = 0
 	  			for (var m in response.data.results) {

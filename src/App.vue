@@ -1,19 +1,6 @@
 <template>
   <div id="app">
-     <DetailScreen v-if="$store.state.showDetails">
-      <img slot="thumbImg" :src="$store.state.activeDetails.thumbURL">
-      <h1 slot="title">
-        {{$store.state.activeDetails.originalTitle}}
-      </h1>
-      <h2 slot="overview">
-        {{$store.state.activeDetails.overview}}
-      </h2>
-      <h3 slot="rating">
-        {{$store.state.activeDetails.rating}}
-      </h3>
-      <h4 slot="release">
-        {{$store.state.activeDetails.releaseDate}}
-      </h4>
+    <DetailScreen v-if="$store.state.showDetails">
     </DetailScreen>
 
     <CategoryDropdown v-else>
@@ -42,21 +29,11 @@ export default {
   },
   computed: {
     activeCategory: function () {
-      const active = this.$store.state.movieCategories.filter((x) => {
+      return this.$store.state.movieCategories.find((x) => {
         return x.active
-      })[0]
-      console.log(active)
-      return active
+      })
     } 
   },
-  // computed: {
-  //   displaySignIn() {
-  //     return this.$store.state.displaySignIn
-  //   },
-  //   displayError() {
-  //     return this.$store.state.error
-  //   }
-  // },
   beforeCreate() {
     this.$store.dispatch('initMovieData')
   }
