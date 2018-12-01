@@ -103,6 +103,7 @@ h4 {
 
 #thumbnail {
   min-width: 94px;
+  min-height: 141px;
   float: left;
 }
 
