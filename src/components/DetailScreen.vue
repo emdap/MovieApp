@@ -1,4 +1,6 @@
 <template>
+  <!-- all movie data comes from store.state.activeDetails, this component only shown if that has data -->
+  <!-- activeDetails has the same properties as any object in any category.movies  -->
   <transition name="fade">
     <div id="detailScreen" v-if="$store.state.showDetails">
       <h1>
@@ -42,9 +44,11 @@ export default {
   name: 'DetailScreen',
   methods: {
     addFav () {
+      // send the activeDetails object (identical to any movie object) to add this movie to the favorite list
       this.$store.commit('pushFavoriteMovie', this.$store.state.activeDetails)
     },
     removeFav () {
+      // removes it from the favorite list
       this.$store.commit('removeFavoriteMovie', this.$store.state.activeDetails)
     }
   }

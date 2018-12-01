@@ -1,6 +1,6 @@
 <template>
   <div>
-    <b-dropdown id="catDrop" :text="activeCategory" class="m-md-2">
+    <b-dropdown id="catDrop" :text="activeCat" class="m-md-2">
       <b-dropdown-item v-for="(category, index) in $store.state.movieCategories" :key="index" @click="setActiveCat(category.id)" 
       :class="{'active' : category.active}">
         {{category.category}}
@@ -16,19 +16,11 @@ import 'bootstrap-vue/dist/bootstrap-vue.css'
 
 export default {
   name: 'DetailScreen',
-  data () {
-    return {
-      expanded: false
-    }
-  },
-  computed: {
-    activeCategory: function () {
-      return this.$store.state.movieCategories.find((x) => {
-        return x.active
-      }).category
-    }
+  props: {
+    activeCat: String
   },
   methods: {
+    // tells the store to set this category as active, set all others as not
     setActiveCat (catId) {
       this.$store.commit('setActiveCategory', catId)
     }
