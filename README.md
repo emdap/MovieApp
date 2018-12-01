@@ -28,7 +28,12 @@ module.exports = {
 	API_KEY: <YOUR API KEY HERE>
 }
 ```
-- Save and you're all set!
+- Save the file ...
+- If you plan on uploading this code somewhere online, create a .gitignore file in the same directory, and include:
+```
+config.js
+```
+so that you don't publish your API key
 
 
 ### Project setup
