@@ -39,4 +39,11 @@ a {
   color: #42b983;
 }
 
+/* for landscape mode x*/
+@media only screen and (min-width: 600px) {
+  .poster {
+    width: 25vw;
+  }
+}
+
 </style>

@@ -106,4 +106,13 @@ export default {
   width: 100vw;
   overflow-x: hidden;
 }
+
+/* for landscape mode x*/
+@media only screen and (min-width: 600px) {
+  .m-md-2 {
+    /* for some reason bootstrap targets min-width and sets this with important*/
+    margin: 0 !important;
+  }
+}
+
 </style>
