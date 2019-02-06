@@ -132,6 +132,7 @@ export default new Vuex.Store({
         setTimeout(function () {
           axios.get('http://api.themoviedb.org/3/movie/top_rated?api_key=' + API_KEY).then((response) => {
           delay = 250
+          console.log(response.data)
           while (response.data.results.length) {
             console.log(delay)
             let curSet = response.data.results.splice(0, 4)

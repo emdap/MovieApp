@@ -10,14 +10,6 @@ To use this app, you will need to get your own API key from themoviedb website. 
 - Mark different movies as favorites, and view a list of your favorites
 - Staggered API calls to themoviedb to keep under the rate limit
 
-## Coming soon
-- Tests! This project was generated with the capability to run Jest tests, and has a placeholder folder
-- Better rate-limit handling so that more movies are shown faster
-- Ability to load additional movies after the initial 20 for popular/top rated
-- CSS changes for use on desktop
-- Dynamic movie poster/thumbnail image fetching to get the best size for the current screen resolution
-
-
 ## Running this project
 
 ### Using your own API key:
