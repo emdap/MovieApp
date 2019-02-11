@@ -1,6 +1,6 @@
 import Vue from 'vue'
 import Vuex from 'vuex'
-import { API_KEY } from '@/../config'
+// import { API_KEY } from '@/../config'
 import axios from 'axios'
 import { runWithDelay } from '@/services/movieDataHelpers'
 
@@ -57,9 +57,6 @@ export default new Vuex.Store({
 
       pushTo.movies.push(movie)
     },
-
-    // Improvement: make use of pushMovie instead of having different function
-    // then don't have to hardcode which categoryId to search for, this would be passed in by component
     pushFavoriteMovie: (state, movie) => {
       // find the favorite movies category
       const favoriteMovies = state.movieCategories.find((x) => {
@@ -69,9 +66,6 @@ export default new Vuex.Store({
       // set in the movie object that it's a favorite
       movie.favorite = true
     },
-    // Improvement: make generic removeMovieFromList function
-    // only use case is for favorite movies right now, but if there were different lists,
-    // could use same logic. But would need to separate out the toggling of movie.favorite
     removeFavoriteMovie: (state, movie) => {
       movie.favorite = false
       const favoriteMovies = state.movieCategories.find((x) => {
@@ -95,23 +89,17 @@ export default new Vuex.Store({
     }
   },
   actions: {
-    // Improvement: make use of the ratelimit-remaining property and when the limit resets to send requests
-    // that way more entries could be loaded at once if under 40
     initMovieData ({commit}) {
       // can only send 4 requests a second (40 per 10 seconds)
       // increment delay +1 second every time 4 requests are sent
-      // or one request every .25 seconds
-      // start delay off at 250 since sending 1 request before we start splicing off subsequent requests
-      // oh and I know each api request is giving me 20 results back, so confident it is divisible by 4
       var delay = 250
 
       // first request, get movie IDs for popular movies, since this is the first screen shown
-      axios.get('http://api.themoviedb.org/3/movie/popular?api_key=' + API_KEY).then((response) => {
+      axios.get('http://localhost:8081/popular').then((response) => {
         while (response.data.results.length) {
           // splice off first 4 requests to run
           let curSet = response.data.results.splice(0, 4)
           // runWithDelay will return a promise and timeout for 'delay' before resolving
-          console.log(delay)
           runWithDelay(curSet, delay).then((response) => {
             // create payload so that pushMovieList knows which list to push to
             // (id 1 is popular movies)
@@ -122,19 +110,15 @@ export default new Vuex.Store({
             commit('pushMovieList', popMovies)
           }).catch((response) => {
             console.log(response)
-          }) 
-          // increment delay
+          })
           delay += 1000
         }
-        // need to set additional buffer or else get timeout, but not sure why?
         delay += 500
         // this next timeout will run once the current delay is up, so after all popular movie details are retrieved
         setTimeout(function () {
-          axios.get('http://api.themoviedb.org/3/movie/top_rated?api_key=' + API_KEY).then((response) => {
+          axios.get('http://localhost:8081/top').then((response) => {
           delay = 250
-          console.log(response.data)
           while (response.data.results.length) {
-            console.log(delay)
             let curSet = response.data.results.splice(0, 4)
             runWithDelay(curSet, delay).then((response) => {
               // id 2 is top rated movies

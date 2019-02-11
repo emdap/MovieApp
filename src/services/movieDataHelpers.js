@@ -1,4 +1,4 @@
-import { API_KEY } from '@/../config'
+// import { API_KEY } from '@/../config'
 import axios from 'axios'
 
 // Improvement: cache the response in services/ImageApi instead of hardcoding baseurl
@@ -10,8 +10,7 @@ export async function runWithDelay (movieData, delay) {
 		// timeout for 'delay'
 		setTimeout(async function() {
 			// map the movieData entries into api calls using x.id
-			let promises = movieData.map(x => axios.get('https://api.themoviedb.org/3/movie/' + x.id + 
-						'?api_key=' + API_KEY + '&language=en-US'))
+			let promises = movieData.map(x => axios.get('http://localhost:8081/details/' + x.id))
 			// evaluate the promises
 			axios.all(promises).then((response) => {
 				// clean up the response with only needed attributes
