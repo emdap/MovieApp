@@ -24,6 +24,7 @@ export default {
 .poster {
   display: inline-block;
   width: 50%;
+  cursor: pointer;
 }
 
 /* for landscape mode x*/

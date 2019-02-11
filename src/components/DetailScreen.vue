@@ -132,6 +132,7 @@ h4 {
   padding: .5rem;
   max-width: 6rem;
   margin-top: 15px;
+  cursor: pointer;
 }
 
 .addFav {

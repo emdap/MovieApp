@@ -1,7 +1,6 @@
 <template>
   <div id="app">
 
-    <!-- not enough functionality to warrant its own component -->
     <b-button v-if="$store.state.showDetails" @click="$store.commit('toggleDetails')" key="closeDetails">
       <div class="box">
         <img id="backArrow" src="@/assets/back_arrow.png">
@@ -9,17 +8,12 @@
       </div>
     </b-button>
 
-    <!-- only renders if showDetails is false -->
     <CategoryDropdown v-else key="changeCategory" :activeCat="activeCategory.category"/>
 
-    <!-- has logic inside to only render if showDetails false, so that can use vue transitions easily -->
     <DetailScreen/>
 
-    <!-- holds all MoviePoster components -->
-    <div id="posterHolder">
-      <!-- v-for will render a MoviePoster component for every movie object in the active category -->
+    <div id="posterHolder" :class="holderClass">
       <MoviePoster v-for="(movie, index) in activeCategory.movies" :key="index" :movie="movie"/>
-      <!-- length will be 0 if movies haven't loaded yet (rate limit!!) or viewing favorites before adding any -->
       <div class="noMovie" v-if="activeCategory.movies.length === 0">
         No movies here yet :(
       </div>
@@ -40,6 +34,19 @@ export default {
     MoviePoster,
     DetailScreen,
     CategoryDropdown
+  },
+  data () {
+    return {
+      holderClass: 'default'
+    }
+  },
+  watch: {
+    activeCategory: function () {
+      this.holderClass = 'fade'
+      setTimeout(() => {
+        this.holderClass = 'default'
+      }, 100)
+    }
   },
   computed: {
     // set the active category to the only movieCategory that has .active == true
@@ -99,6 +106,16 @@ export default {
     width: 10px;
 }
 
+#posterHolder.default {
+  opacity: 100;
+  transition: opacity .1s;
+}
+
+#posterHolder.fade {
+  opacity: 0;
+  transition: opacity 0s;
+}
+
 .noMovie {
   text-align: center;
   margin-top: 10px;
@@ -119,6 +136,7 @@ export default {
   width: 100vw;
   /*max-width: 800px;*/
   overflow-x: hidden;
+  background: black;
 }
 
 /* for landscape mode x*/
