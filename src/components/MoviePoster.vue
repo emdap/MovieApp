@@ -23,13 +23,13 @@ export default {
 <style scoped>
 .poster {
   display: inline-block;
-  width: 50vw;
+  width: 50%;
 }
 
 /* for landscape mode x*/
 @media only screen and (min-width: 600px) {
   .poster {
-    width: 25vw;
+    width: 25%;
   }
 }
 

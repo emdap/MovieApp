@@ -89,9 +89,14 @@ export default {
 #posterHolder {
   position: relative;
   height: calc(100vh - 2.5rem);
-  width: 100vw;
+  width: calc(100vw + 10px);
+  /*max-width: 810px;*/
   overflow: auto;
   z-index: 2;
+}
+
+#posterHolder::-webkit-scrollbar {
+    width: 10px;
 }
 
 .noMovie {
@@ -112,6 +117,7 @@ export default {
 
 #app {
   width: 100vw;
+  /*max-width: 800px;*/
   overflow-x: hidden;
 }
 
