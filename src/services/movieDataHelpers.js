@@ -10,7 +10,7 @@ export async function runWithDelay (movieData, delay) {
 		// timeout for 'delay'
 		setTimeout(async function() {
 			// map the movieData entries into api calls using x.id
-			let promises = movieData.map(x => axios.get('http://localhost:8081/details/' + x.id))
+			let promises = movieData.map(x => axios.get('https://goodmovie.azurewebsites.net/details/' + x.id))
 			// evaluate the promises
 			axios.all(promises).then((response) => {
 				// clean up the response with only needed attributes
@@ -37,7 +37,7 @@ function tidyMovieObj (rawResponse) {
 			rating: tempMovie.vote_average,
 			releaseDate: tempMovie.release_date,
 			runtime: tempMovie.runtime,
-			posterURL: baseURL + 'w185/' + tempMovie.poster_path,
+			posterURL: baseURL + 'w500/' + tempMovie.poster_path,
 			thumbURL: baseURL + 'w92/' + tempMovie.poster_path,
 			favorite: false
 		}

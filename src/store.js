@@ -95,7 +95,7 @@ export default new Vuex.Store({
       var delay = 250
 
       // first request, get movie IDs for popular movies, since this is the first screen shown
-      axios.get('http://localhost:8081/popular').then((response) => {
+      axios.get('https://goodmovie.azurewebsites.net/popular').then((response) => {
         while (response.data.results.length) {
           // splice off first 4 requests to run
           let curSet = response.data.results.splice(0, 4)
@@ -116,7 +116,7 @@ export default new Vuex.Store({
         delay += 500
         // this next timeout will run once the current delay is up, so after all popular movie details are retrieved
         setTimeout(function () {
-          axios.get('http://localhost:8081/top').then((response) => {
+          axios.get('https://goodmovie.azurewebsites.net/top').then((response) => {
           delay = 250
           while (response.data.results.length) {
             let curSet = response.data.results.splice(0, 4)
