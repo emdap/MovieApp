@@ -13,12 +13,11 @@
             {{$store.state.activeDetails.releaseDate.substring(0,4)}}<br/>
           </h2>
           <h3>
-            {{$store.state.activeDetails.runtime}} min
+            {{$store.state.activeDetails.rating}}/10
           </h3>
           <h4>
-            {{$store.state.activeDetails.rating}}/10
+            {{$store.state.activeDetails.voteCount}} votes
           </h4>
-
           <transition name="slide-fade" mode="out-in">
             <div class="button addFav" v-if="!$store.state.activeDetails.favorite" @click="addFav" key="add">
               Mark as favorite

@@ -1,5 +1,6 @@
 // import { API_KEY } from '@/../config'
 import axios from 'axios'
+import store from '../store'
 
 // Improvement: cache the response in services/ImageApi instead of hardcoding baseurl
 const baseURL = 'http://image.tmdb.org/t/p/'
@@ -25,23 +26,41 @@ export async function runWithDelay (movieData, delay) {
 	return promise
 }
 
-function tidyMovieObj (rawResponse) {
-	const tidyObjs = []
+export function loopResponses(response, delay, categoryId) {
+	console.log(response.length)
+	while (response.length) {
+      // splice off first 4 requests to run
+      let curSet = response.splice(0, 4)
+      // runWithDelay will return a promise and timeout for 'delay' before resolving
+      runWithDelay(curSet, delay).then((response) => {
+        // create payload so that pushMovieList knows which list to push to
+        // (id 1 is popular movies)
+        const popMovies = {
+          categoryId: categoryId,
+          movies: response
+        }
+        store.commit('pushMovieList', popMovies)
+      }).catch((response) => {
+        console.log(response)
+      })
+      delay += 1000
+    }
+}
+
+export function tidyMovieObj (rawResponse) {
 	// loop through and set data the app needs
-	for (var r in rawResponse) {
-		let tempMovie = rawResponse[r].data
-		let newMovie = {
+	var tidyObjs = rawResponse.map(tempMovie => 
+		({
 			id: tempMovie.id,
 			originalTitle: tempMovie.original_title,
 			overview: tempMovie.overview,
 			rating: tempMovie.vote_average,
 			releaseDate: tempMovie.release_date,
-			runtime: tempMovie.runtime,
-			posterURL: baseURL + 'w500/' + tempMovie.poster_path,
-			thumbURL: baseURL + 'w92/' + tempMovie.poster_path,
+			voteCount: tempMovie.vote_count,
+			posterURL: baseURL + 'w500' + tempMovie.poster_path,
+			thumbURL: baseURL + 'w92' + tempMovie.poster_path,
 			favorite: false
-		}
-		tidyObjs.push(newMovie)
-	}
+		})
+	)
 	return tidyObjs
 }

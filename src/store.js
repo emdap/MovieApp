@@ -2,7 +2,7 @@ import Vue from 'vue'
 import Vuex from 'vuex'
 // import { API_KEY } from '@/../config'
 import axios from 'axios'
-import { runWithDelay } from '@/services/movieDataHelpers'
+import { runWithDelay, loopResponses, tidyMovieObj } from '@/services/movieDataHelpers'
 
 Vue.use(Vuex)
 
@@ -29,9 +29,7 @@ export default new Vuex.Store({
       })
     },
     pushMovieList: (state, payload) => {
-      // pushes movie objects to a category's .movies list
-      // using .concat instead of .push wasn't updating state
-
+      // need to .push or else vue won't react to the state change
       const catId = payload.categoryId
       const movieList = payload.movies
 
@@ -96,48 +94,30 @@ export default new Vuex.Store({
 
       // first request, get movie IDs for popular movies, since this is the first screen shown
       axios.get('https://goodmovie.azurewebsites.net/popular').then((response) => {
-        while (response.data.results.length) {
-          // splice off first 4 requests to run
-          let curSet = response.data.results.splice(0, 4)
-          // runWithDelay will return a promise and timeout for 'delay' before resolving
-          runWithDelay(curSet, delay).then((response) => {
-            // create payload so that pushMovieList knows which list to push to
-            // (id 1 is popular movies)
-            const popMovies = {
-              categoryId: 1,
-              movies: response
-            }
-            commit('pushMovieList', popMovies)
-          }).catch((response) => {
-            console.log(response)
-          })
-          delay += 1000
+        // loopResponses(response.data.results, delay, 1)
+        var movieData = tidyMovieObj(response.data.results)
+        const popMovies = {
+          categoryId: 1,
+          movies: movieData
         }
-        delay += 500
+        commit('pushMovieList', popMovies)
+        // delay += 500
         // this next timeout will run once the current delay is up, so after all popular movie details are retrieved
-        setTimeout(function () {
-          axios.get('https://goodmovie.azurewebsites.net/top').then((response) => {
-          delay = 250
-          while (response.data.results.length) {
-            let curSet = response.data.results.splice(0, 4)
-            runWithDelay(curSet, delay).then((response) => {
-              // id 2 is top rated movies
-              const topMovies = {
-                categoryId: 2,
-                movies: response
-              }
-              commit('pushMovieList', topMovies)
-            }).catch((response) => {
-              console.log(response)
-            })
-            delay += 1000
+        // setTimeout(function () {
+        axios.get('https://goodmovie.azurewebsites.net/top').then((response) => {
+          // delay = 250
+          // loopResponses(response.data.results, delay, 2)
+          movieData = tidyMovieObj(response.data.results)
+          const topMovies = {
+            categoryId: 2,
+            movies: movieData
           }
-        })}, delay)
-      }).catch((response) => {
-        console.log(response)
+          commit('pushMovieList', topMovies)
+          // })}, delay)
+        }).catch((response) => {
+          console.log(response)
+        })
       })
-      
-
     }
   }
 })
