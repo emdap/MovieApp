@@ -11,6 +11,7 @@ To use this app in your own project, you will need to get your own API key from 
 - Click into movie posters to get more details
 - Mark different movies as favorites, and view a list of your favorites
 - Staggered API calls to themoviedb to keep under the rate limit
+- Infinite scrolling!
 
 ## Running this project
 
