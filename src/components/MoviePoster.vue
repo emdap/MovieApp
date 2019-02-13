@@ -24,6 +24,7 @@ export default {
 .poster {
   display: inline-block;
   width: 50%;
+  max-height: 75%;
   cursor: pointer;
 }
 
@@ -31,6 +32,7 @@ export default {
 @media only screen and (min-width: 600px) {
   .poster {
     width: 25%;
+    max-height: 45%;
   }
 }
 

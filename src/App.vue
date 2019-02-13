@@ -37,15 +37,30 @@ export default {
   },
   data () {
     return {
-      holderClass: 'default'
+      holderClass: 'default',
+      holderId: 'posterHolder'
+    }
+  },
+  methods: {
+    fadeHolder: function (timeout) {
+      this.holderClass = 'fade'
+      setTimeout(() => {
+        this.holderClass = 'default'
+      }, timeout)
+    },
+    handleScroll: function () {
+      var oh = document.getElementById(this.holderId).offsetHeight
+      var sh = document.getElementById(this.holderId).scrollHeight
+      var st = document.getElementById(this.holderId).scrollTop
+      // load more content once scrolled almost to bottom
+      if (this.activeCategory.id != 3 && st + oh >= sh - 100) {
+        this.$store.dispatch('fetchMovies', this.activeCategory.id)
+      }
     }
   },
   watch: {
     activeCategory: function () {
-      this.holderClass = 'fade'
-      setTimeout(() => {
-        this.holderClass = 'default'
-      }, 100)
+      this.fadeHolder(100)
     }
   },
   computed: {
@@ -56,9 +71,14 @@ export default {
       })
     } 
   },
-  beforeCreate() {
+  beforeCreate () {
     // this will get data from the API
-    this.$store.dispatch('initMovieData')
+    this.$store.dispatch('fetchMovies', 1)
+    this.$store.dispatch('fetchMovies', 2)
+  },
+  mounted () {
+    document.getElementById(this.holderId).addEventListener('scroll', this.handleScroll);
+    this.fadeHolder(500)
   }
 }
 
@@ -108,7 +128,7 @@ export default {
 
 #posterHolder.default {
   opacity: 100;
-  transition: opacity .1s;
+  transition: opacity .2s;
 }
 
 #posterHolder.fade {
