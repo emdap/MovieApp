@@ -1,4 +1,4 @@
-## Good Movies
+## Good Movie
 This is a webapp that uses data from https://www.themoviedb.org to generate lists of popular and top rated movies! Good Movies is intended to use from your phone, but looks nice on desktop too. Works best on Chrome.
 
 Temporarily hosted at https://goodmovie.azurewebsites.net until I run out of free credits. The API key needed to access themoviedb is stored on the server side, and this webapps makes calls to the appropriate endpoints on the azure website.
