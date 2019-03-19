@@ -2,7 +2,7 @@ import Vue from 'vue'
 import Vuex from 'vuex'
 // import { API_KEY } from '@/../config'
 import axios from 'axios'
-import { tidyMovieObj } from '@/services/movieDataHelpers'
+import { tidyMovieObj, tidyDetails } from '@/services/movieDataHelpers'
 
 Vue.use(Vuex)
 
@@ -17,7 +17,8 @@ export default new Vuex.Store({
     ],
     apiRate: {
       remaining: 40,
-      reset: 0
+      reset: 0,
+      delay: 0
     }
   },
   mutations: {
@@ -80,6 +81,11 @@ export default new Vuex.Store({
         return x.favorite
       })
     },
+    addMovieDetails: (state, payload) => {
+      const movie = payload.movie
+      movie.noDetails = false
+      movie.details = payload.details
+    },
     setActiveDetails: (state, movie) => {
       // activeDetails is used by DetailScreen
       // set to relevant movie object so that DetailScreen can show right info
@@ -96,6 +102,12 @@ export default new Vuex.Store({
     decRemaining: (state) => {
       state.apiRate.remaining--
     },
+    autoSetDelay: (state) => {
+      state.apiRate.delay = state.apiRate.reset
+    },
+    forceSetDelay: (state, delay) => {
+      state.apiRate.delay = delay
+    },
     updatePage: (state, categoryId) => {
       const updateCategory = state.movieCategories.find((x) => {
         return x.id === categoryId
@@ -104,18 +116,37 @@ export default new Vuex.Store({
     }
   },
   actions: {
-    fetchMovies ({commit, state}, categoryId) {
-      var delay = 0
+    updateApiRate ({commit, state}) {
       commit('decRemaining')
       if (state.apiRate.remaining <= 10) {
-        delay = state.apiRate.reset
+        commit('autoSetDelay')
         // in test case of firing off 60 requests, api doesn't return limit reset
         // in time for delay to be updated and the excess requests to be limited
-        if (delay == 0) {
+        if (state.apiRate.delay == 0) {
           // anything over 40, need to wait an additional 10 seconds for limit to reset again
-          delay = 10000 * Math.ceil(Math.abs(state.apiRate.remaining) / 40)
+          var amt = 10000 * Math.ceil(Math.abs(state.apiRate.remaining) / 40)
+          commit('forceSetDelay', amt)
         }
+      } else {
+        commit('forceSetDelay', 0)
       }
+    },
+    fetchDetails ({dispatch, commit, state}, movie) {
+      dispatch('updateApiRate')
+      commit('decRemaining')
+      setTimeout(() => {
+        axios.get('https://good-movie.herokuapp.com/details/' + movie.id).then((response) => {
+          var movieDetails = tidyDetails(response.data)
+          var payload = {
+            movie: movie,
+            details: movieDetails
+          }
+          commit('addMovieDetails', payload)
+        })
+      }, state.apiRate.delay)
+    },
+    fetchMovies ({dispatch, commit, state}, categoryId) {
+      dispatch('updateApiRate')
       setTimeout(() => {
         if (categoryId == 1) {
           var category = 'popular'
@@ -126,7 +157,7 @@ export default new Vuex.Store({
         }
         // do this before api call returned so that subsequent calls will use right page
         commit('updatePage', categoryId)
-        axios.get('https://goodmovie.azurewebsites.net/' + category + '/' + page).then((response) => {
+        axios.get('https://good-movie.herokuapp.com/' + category + '/' + page).then((response) => {
           commit('updateRate', response.data)
           var movieData = tidyMovieObj(response.data.data.results)
           const movieList = {
@@ -135,41 +166,7 @@ export default new Vuex.Store({
           }
           commit('pushMovieList', movieList)
         })
-      }, delay)
+      }, state.apiRate.delay)
     }
-    // ,
-    // initMovieData ({commit}) {
-    //   axios.get('https://goodmovie.azurewebsites.net/popular').then((response) => {
-
-    //     console.log(response)
-    //     var limitRemaining = response.data.headers[0]
-    //     if (limitRemaining == 0) {
-    //       var resets = response.data.headers[1] * 1000
-    //       var delay = Math.ceil((resets - Date.now()) / 100)
-    //       runWithDelay()
-    //     }
-    //     var resets = new Date(response.data.headers[1]*1000)
-    //     console.log(response.data.headers[1] * 1000 - Date.now())
-    //     console.log(Date(response.data.headers[1] * 1000 - Date.now()))
-    //     var movieData = tidyMovieObj(response.data.data.results)
-    //     const popMovies = {
-    //       categoryId: 1,
-    //       movies: movieData
-    //     }
-    //     commit('pushMovieList', popMovies)
-
-    //     axios.get('https://goodmovie.azurewebsites.net/top').then((response) => {
-    //       console.log(response)
-    //       movieData = tidyMovieObj(response.data.data.results)
-    //       const topMovies = {
-    //         categoryId: 2,
-    //         movies: movieData
-    //       }
-    //       commit('pushMovieList', topMovies)
-    //     }).catch((response) => {
-    //       console.log(response)
-    //     })
-    //   })
-    // }
   }
 })

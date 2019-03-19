@@ -11,6 +11,10 @@ export default {
   },
   methods: {
     openDetails () {
+      // details haven't been set
+      if (this.movie.noDetails) {
+        this.$store.dispatch('fetchDetails', this.movie)
+      }
       // set the activeDetails to be this movie object
       this.$store.commit('setActiveDetails', this.movie)
       // toggle details so that DetailScreen becomes visible

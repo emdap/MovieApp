@@ -1,7 +1,6 @@
 const baseURL = 'http://image.tmdb.org/t/p/'
 
 export function tidyMovieObj (rawResponse) {
-	// loop through and set data the app needs
 	var tidyObjs = rawResponse.map(tempMovie => 
 		({
 			id: tempMovie.id,
@@ -12,8 +11,17 @@ export function tidyMovieObj (rawResponse) {
 			voteCount: tempMovie.vote_count,
 			posterURL: baseURL + 'w500' + tempMovie.poster_path,
 			thumbURL: baseURL + 'w92' + tempMovie.poster_path,
-			favorite: false
+			favorite: false,
+			noDetails: true
 		})
 	)
 	return tidyObjs
+}
+
+export function tidyDetails (rawResponse) {
+	var tidyDetails = {
+		homepage: rawResponse.homepage,
+		genres: rawResponse.genres.map(g => g.name)
+	}
+	return tidyDetails
 }

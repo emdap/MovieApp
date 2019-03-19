@@ -31,6 +31,23 @@
         <div id="overview">
           {{$store.state.activeDetails.overview}}
         </div>
+        <!-- prevent this from rendering until api call completed -->
+        <div v-if="!$store.state.activeDetails.noDetails" class="additionalDetails">
+          <div id="genres">
+            <strong>Genres</strong>
+            <ul>
+              <li v-for="(genre, index) in $store.state.activeDetails.details.genres" :key="index">
+                {{genre}}
+              </li>
+            </ul>
+          </div>
+          <div id="homepage" v-if="$store.state.activeDetails.details.homepage != null">
+            <strong>Movie Website:</strong><br/>
+            <a :href="$store.state.activeDetails.details.homepage" target="_blank">
+              {{$store.state.activeDetails.details.homepage}}
+            </a>
+          </div>
+        </div>
       </div>
     </div>
   </transition>
@@ -102,6 +119,29 @@ h4 {
 #detailContent {
   width: 100%;
   padding: .75rem 2rem;
+}
+
+#genres {
+  float: left;
+  font-size: .75rem;
+  margin-top: .25rem;
+  width: 100%;
+}
+
+#homepage {
+  float: left;
+  font-size: .75rem;
+}
+
+a {
+   color: rgb(100, 200, 200);
+   transition: all .5s;
+}
+
+a:hover {
+   color: rgb(100, 200, 200);
+   letter-spacing: .1rem;
+   text-decoration: none;
 }
 
 #thumbnail {
