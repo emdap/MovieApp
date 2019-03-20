@@ -108,17 +108,26 @@ h4 {
   position: absolute;
   top: 2.5rem;
   left: 0;
-  width: 100vw;
+  width: calc(100vw + 14px);
   height: calc(100vh - 2.5rem);
-  overflow: auto;
+  overflow-y: scroll;
+  overflow-x: hidden;
+  -webkit-overflow-scrolling: touch;
   z-index: 3;
   background: white;
-  color: grey;
+  color: grey; 
+  /* for firefox */
+  scrollbar-width: thin;
+}
+
+#detailScreen::-webkit-scrollbar {
+    width: 14px;
 }
 
 #detailContent {
   width: 100%;
   padding: .75rem 2rem;
+  overflow: hidden;
 }
 
 #genres {

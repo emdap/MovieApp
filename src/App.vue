@@ -45,6 +45,7 @@ export default {
     fadeHolder: function (timeout) {
       this.holderClass = 'fade'
       setTimeout(() => {
+        document.getElementById(this.holderId).scrollTop = 0
         this.holderClass = 'default'
       }, timeout)
     },
@@ -88,6 +89,10 @@ export default {
 
 /* affects all bootstrap buttons in app */
 
+body {
+  overflow: hidden;
+}
+
 .btn {
   width: 100vw;
   margin: 0;
@@ -116,14 +121,18 @@ export default {
 #posterHolder {
   position: relative;
   height: calc(100vh - 2.5rem);
-  width: calc(100vw + 10px);
+  width: calc(100vw + 14px);
   /*max-width: 810px;*/
-  overflow: auto;
+  overflow-y: scroll;
+  overflow-x: hidden;
+  -webkit-overflow-scrolling: touch;
+  /* for firefox */
+  scrollbar-width: thin;
   z-index: 2;
 }
 
 #posterHolder::-webkit-scrollbar {
-    width: 10px;
+    width: 14px;
 }
 
 #posterHolder.default {

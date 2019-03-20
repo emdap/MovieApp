@@ -148,12 +148,14 @@ export default new Vuex.Store({
     fetchMovies ({dispatch, commit, state}, categoryId) {
       dispatch('updateApiRate')
       setTimeout(() => {
+        var category
+        var page
         if (categoryId == 1) {
-          var category = 'popular'
-          var page = state.movieCategories.find((x) => {return x.id === categoryId}).page
+          category = 'popular'
+          page = state.movieCategories.find((x) => {return x.id === categoryId}).page
         } else if (categoryId == 2) {
-          var category = 'top'
-          var page = state.movieCategories.find((x) => {return x.id === categoryId}).page
+          category = 'top'
+          page = state.movieCategories.find((x) => {return x.id === categoryId}).page
         }
         // do this before api call returned so that subsequent calls will use right page
         commit('updatePage', categoryId)
