@@ -1,7 +1,7 @@
 <template>
   <div id="app">
 
-    <b-button v-if="$store.state.showDetails" @click="$store.commit('toggleDetails')" key="closeDetails">
+    <b-button v-if="$store.state.showDetails" @click="toggleDetailScreen" key="closeDetails">
       <div class="box">
         <img id="backArrow" src="@/assets/back_arrow.png">
         Movie Detail
@@ -38,10 +38,27 @@ export default {
   data () {
     return {
       holderClass: 'default',
-      holderId: 'posterHolder'
+      holderId: 'posterHolder',
+      scrollable: true
     }
   },
   methods: {
+    toggleDetailScreen: function () {
+      this.toggleScroll()
+      this.$store.commit('toggleDetails')
+    },
+    toggleScroll: function () {
+      // issue on iOS with detail screen not being scrollable
+      // but instead scrolling the poster holder, need to disable scrolling
+      // setting delay to avoid scrollbar momentarily being visible or the width change affecting look
+      var delay = (this.scrollable) ? 0 : 100
+      setTimeout(() => {
+        document.getElementById(this.holderId).style.overflowY = (this.scrollable) ? "hidden" : "scroll"
+        document.getElementById(this.holderId).style.width = (this.scrollable) ? "100vw" : "calc(100vw + 14px)"
+        this.scrollable = !this.scrollable
+      }, delay)
+
+    },
     fadeHolder: function (timeout) {
       this.holderClass = 'fade'
       setTimeout(() => {
@@ -62,6 +79,9 @@ export default {
   watch: {
     activeCategory: function () {
       this.fadeHolder(100)
+    },
+    activeMovieDetails: function () {
+      this.toggleScroll()
     }
   },
   computed: {
@@ -70,6 +90,9 @@ export default {
       return this.$store.state.movieCategories.find((x) => {
         return x.active
       })
+    },
+    activeMovieDetails: function () {
+      return this.$store.state.activeDetails
     } 
   },
   beforeCreate () {
@@ -88,10 +111,6 @@ export default {
 <style>
 
 /* affects all bootstrap buttons in app */
-
-body {
-  overflow: hidden;
-}
 
 .btn {
   width: 100vw;
@@ -162,9 +181,10 @@ body {
 }
 
 #app {
-  width: 100vw;
+  width: 100%;
+  height: 100%;
   /*max-width: 800px;*/
-  overflow-x: hidden;
+  overflow: hidden;
   background: black;
 }
 

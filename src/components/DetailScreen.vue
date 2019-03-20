@@ -6,49 +6,50 @@
       <h1>
         {{$store.state.activeDetails.originalTitle}}
       </h1>
-      <div id="detailContent">
-        <img id="thumbnail" :src="$store.state.activeDetails.thumbURL">
-        <div id="quickFacts">
-          <h2>
-            {{$store.state.activeDetails.releaseDate.substring(0,4)}}<br/>
-          </h2>
-          <h3>
-            {{$store.state.activeDetails.rating}}/10
-          </h3>
-          <h4>
-            {{$store.state.activeDetails.voteCount}} votes
-          </h4>
-          <transition name="slide-fade" mode="out-in">
-            <div class="button addFav" v-if="!$store.state.activeDetails.favorite" @click="addFav" key="add">
-              Mark as favorite
-            </div>
-            <div class="button removeFav" v-if="$store.state.activeDetails.favorite" @click="removeFav" key="remove">
-              Remove from favorites
-            </div>
-          </transition>
-        
-        </div>
-        <div id="overview">
-          {{$store.state.activeDetails.overview}}
-        </div>
-        <!-- prevent this from rendering until api call completed -->
-        <div v-if="!$store.state.activeDetails.noDetails" class="additionalDetails">
-          <div id="genres">
-            <strong>Genres</strong>
-            <ul>
-              <li v-for="(genre, index) in $store.state.activeDetails.details.genres" :key="index">
-                {{genre}}
-              </li>
-            </ul>
+      <!-- not all fields need api call to complete, but looks better to fade everything in -->
+      <transition name="fade" mode="out-in">
+        <div id="detailContent" v-if="!$store.state.activeDetails.noDetails">
+          <img id="thumbnail" :src="$store.state.activeDetails.thumbURL">
+          <div id="quickFacts">
+            <h2>
+              {{$store.state.activeDetails.releaseDate.substring(0,4)}}<br/>
+            </h2>
+            <h3>
+              {{$store.state.activeDetails.rating}}/10
+            </h3>
+            <h4>
+              {{$store.state.activeDetails.voteCount}} votes
+            </h4>
+            <transition name="slide-fade" mode="out-in">
+              <div class="button addFav" v-if="!$store.state.activeDetails.favorite" @click="addFav" key="add">
+                Mark as favorite
+              </div>
+              <div class="button removeFav" v-if="$store.state.activeDetails.favorite" @click="removeFav" key="remove">
+                Remove from favorites
+              </div>
+            </transition>
+          
           </div>
-          <div id="homepage" v-if="$store.state.activeDetails.details.homepage != null">
-            <strong>Movie Website:</strong><br/>
-            <a :href="$store.state.activeDetails.details.homepage" target="_blank">
-              {{$store.state.activeDetails.details.homepage}}
-            </a>
+          <div id="overview">
+            {{$store.state.activeDetails.overview}}
           </div>
-        </div>
-      </div>
+          <!-- below 2 fields need api call to complete -->
+            <div id="genres">
+              <strong>Genres</strong>
+              <ul>
+                <li v-for="(genre, index) in $store.state.activeDetails.details.genres" :key="index">
+                  {{genre}}
+                </li>
+              </ul>
+            </div>
+            <div id="homepage" v-if="$store.state.activeDetails.details.homepage != null">
+              <strong>Movie Website:</strong><br/>
+              <a :href="$store.state.activeDetails.details.homepage" target="_blank">
+                {{$store.state.activeDetails.details.homepage}}
+              </a>
+            </div>
+          </div>
+      </transition>
     </div>
   </transition>
 </template>
@@ -108,26 +109,26 @@ h4 {
   position: absolute;
   top: 2.5rem;
   left: 0;
-  width: calc(100vw + 14px);
+  width: calc(100vw);
   height: calc(100vh - 2.5rem);
-  overflow-y: scroll;
-  overflow-x: hidden;
-  -webkit-overflow-scrolling: touch;
+  overflow: hidden;
   z-index: 3;
   background: white;
   color: grey; 
-  /* for firefox */
-  scrollbar-width: thin;
 }
 
-#detailScreen::-webkit-scrollbar {
+#detailContent::-webkit-scrollbar {
     width: 14px;
 }
 
 #detailContent {
-  width: 100%;
+  width: (100vw  + 14px);
+  margin-right: -14px;
   padding: .75rem 2rem;
-  overflow: hidden;
+  overflow-y: scroll;
+  -webkit-overflow-scrolling: touch;
+  /* for firefox */
+  scrollbar-width: thin;
 }
 
 #genres {
@@ -168,6 +169,7 @@ a:hover {
 #overview {
   display: block;
   float: left;
+  width: 100%;
   font-size: .75rem;
   text-align: left;
   margin-top: 15px;
