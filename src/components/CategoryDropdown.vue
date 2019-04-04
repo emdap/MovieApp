@@ -1,5 +1,5 @@
 <template>
-  <div>
+  <div id="catDropHolder">
     <b-dropdown id="catDrop" :text="activeCat" class="m-md-2">
       <b-dropdown-item v-for="(category, index) in $store.state.movieCategories" :key="index" @click="setActiveCat(category.id)" 
       :class="{'active' : category.active}">
@@ -30,4 +30,9 @@ export default {
 
 <style scoped>
 /* bootstrap buttons/dropdown has styling in App.vue */
+#catDrop{
+  z-index: 5;
+  position: fixed;
+  top: 0;
+}
 </style>

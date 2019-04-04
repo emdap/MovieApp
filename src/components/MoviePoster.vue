@@ -27,16 +27,16 @@ export default {
 <style scoped>
 .poster {
   display: inline-block;
-  width: 50%;
-  max-height: 75%;
+  width: 50vw;
   cursor: pointer;
 }
 
 /* for landscape mode x*/
 @media only screen and (min-width: 600px) {
   .poster {
-    width: 25%;
-    max-height: 45%;
+    display: inline-block;
+    width: 25vw;
+    cursor: pointer;
   }
 }
 

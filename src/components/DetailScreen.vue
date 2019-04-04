@@ -83,6 +83,9 @@ h1 {
   font-weight: lighter;
   padding: 1rem 1.2rem;
   box-shadow: 0 0 2px 2px rgba(0, 0, 0, .4);
+  position: sticky;
+  top: 0;
+  /* top: 2.5rem; */
 }
 
 /* release date */
@@ -109,26 +112,20 @@ h4 {
   position: absolute;
   top: 2.5rem;
   left: 0;
-  width: calc(100vw);
-  height: calc(100vh - 2.5rem);
-  overflow: hidden;
+  width: 100%;
+  height: calc(100% - 2.5rem);
+  margin-right: -14px;
+  overflow-y: scroll;
+  -webkit-overflow-scrolling: touch;
   z-index: 3;
   background: white;
   color: grey; 
-}
-
-#detailContent::-webkit-scrollbar {
-    width: 14px;
+  /* for firefox */
+  scrollbar-width: thin;
 }
 
 #detailContent {
-  width: (100vw  + 14px);
-  margin-right: -14px;
   padding: .75rem 2rem;
-  overflow-y: scroll;
-  -webkit-overflow-scrolling: touch;
-  /* for firefox */
-  scrollbar-width: thin;
 }
 
 #genres {
@@ -141,6 +138,7 @@ h4 {
 #homepage {
   float: left;
   font-size: .75rem;
+  margin-bottom: 1rem;
 }
 
 a {

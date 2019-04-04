@@ -1,87 +1,51 @@
 <template>
   <div id="app">
+    <div id="headerHolder">
+      <b-button id="detailBack" v-if="$store.state.showDetails" @click="toggleDetailScreen" key="closeDetails">
+        <div class="box">
+          <img id="backArrow" src="@/assets/back_arrow.png">
+          Movie Detail
+        </div>
+      </b-button>
 
-    <b-button v-if="$store.state.showDetails" @click="toggleDetailScreen" key="closeDetails">
-      <div class="box">
-        <img id="backArrow" src="@/assets/back_arrow.png">
-        Movie Detail
-      </div>
-    </b-button>
-
-    <CategoryDropdown v-else key="changeCategory" :activeCat="activeCategory.category"/>
-
-    <DetailScreen/>
-
-    <div id="posterHolder" :class="holderClass">
-      <MoviePoster v-for="(movie, index) in activeCategory.movies" :key="index" :movie="movie"/>
-      <div class="noMovie" v-if="activeCategory.movies.length === 0">
-        No movies here yet :(
-      </div>
+      <CategoryDropdown v-else key="changeCategory" :activeCat="activeCategory.category"/>
     </div>
+    <DetailScreen/>
+    <PosterHolder :activeCat="activeCategory" :haveScroll="scrollable"/>
 
   </div>
 </template>
 
 <script>
 
-import MoviePoster from '@/components/MoviePoster'
 import DetailScreen from '@/components/DetailScreen'
 import CategoryDropdown from '@/components/CategoryDropdown'
+import PosterHolder from '@/components/PosterHolder'
 
 export default {
   name: 'App',
   components: {
-    MoviePoster,
     DetailScreen,
-    CategoryDropdown
+    CategoryDropdown,
+    PosterHolder
   },
   data () {
     return {
-      holderClass: 'default',
-      holderId: 'posterHolder',
+      // relates to if posterholder can be scrolled, issue with iOS
+      // see comment in posterholder
       scrollable: true
     }
   },
   methods: {
     toggleDetailScreen: function () {
-      this.toggleScroll()
+      // this.toggleScroll()
+      this.scrollable = !this.scrollable
       this.$store.commit('toggleDetails')
-    },
-    toggleScroll: function () {
-      // issue on iOS with detail screen not being scrollable
-      // but instead scrolling the poster holder, need to disable scrolling
-      // setting delay to avoid scrollbar momentarily being visible or the width change affecting look
-      var delay = (this.scrollable) ? 0 : 100
-      setTimeout(() => {
-        document.getElementById(this.holderId).style.overflowY = (this.scrollable) ? "hidden" : "scroll"
-        document.getElementById(this.holderId).style.width = (this.scrollable) ? "100vw" : "calc(100vw + 14px)"
-        this.scrollable = !this.scrollable
-      }, delay)
-
-    },
-    fadeHolder: function (timeout) {
-      this.holderClass = 'fade'
-      setTimeout(() => {
-        document.getElementById(this.holderId).scrollTop = 0
-        this.holderClass = 'default'
-      }, timeout)
-    },
-    handleScroll: function () {
-      var oh = document.getElementById(this.holderId).offsetHeight
-      var sh = document.getElementById(this.holderId).scrollHeight
-      var st = document.getElementById(this.holderId).scrollTop
-      // load more content once scrolled almost to bottom
-      if (this.activeCategory.id != 3 && st + oh >= sh - 100) {
-        this.$store.dispatch('fetchMovies', this.activeCategory.id)
-      }
     }
   },
   watch: {
-    activeCategory: function () {
-      this.fadeHolder(100)
-    },
     activeMovieDetails: function () {
-      this.toggleScroll()
+      this.scrollable = !this.scrollable
     }
   },
   computed: {
@@ -99,10 +63,6 @@ export default {
     // this will get data from the API
     this.$store.dispatch('fetchMovies', 1)
     this.$store.dispatch('fetchMovies', 2)
-  },
-  mounted () {
-    document.getElementById(this.holderId).addEventListener('scroll', this.handleScroll);
-    this.fadeHolder(500)
   }
 }
 
@@ -137,38 +97,9 @@ export default {
   width: 100%;
 }
 
-#posterHolder {
-  position: relative;
-  height: calc(100vh - 2.5rem);
-  width: calc(100vw + 14px);
-  /*max-width: 810px;*/
-  overflow-y: scroll;
-  overflow-x: hidden;
-  -webkit-overflow-scrolling: touch;
-  /* for firefox */
-  scrollbar-width: thin;
-  z-index: 2;
-}
-
-#posterHolder::-webkit-scrollbar {
-    width: 14px;
-}
-
-#posterHolder.default {
-  opacity: 100;
-  transition: opacity .2s;
-}
-
-#posterHolder.fade {
-  opacity: 0;
-  transition: opacity 0s;
-}
-
-.noMovie {
-  text-align: center;
-  margin-top: 10px;
-  font-weight: bold;
-  color: grey;
+#detailBack {
+  position: fixed;
+  top: 0;
 }
 
 #backArrow {
@@ -185,7 +116,12 @@ export default {
   height: 100%;
   /*max-width: 800px;*/
   overflow: hidden;
-  background: black;
+  background-color: rgb(33, 33, 33);
+}
+
+::-webkit-scrollbar {
+    width: 0px;
+    background: transparent; /* make scrollbar transparent */
 }
 
 /* for landscape mode x*/
