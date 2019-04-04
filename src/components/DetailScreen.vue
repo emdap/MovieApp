@@ -119,9 +119,7 @@ h4 {
   -webkit-overflow-scrolling: touch;
   z-index: 3;
   background: white;
-  color: grey; 
-  /* for firefox */
-  scrollbar-width: thin;
+  color: grey;
 }
 
 #detailContent {
@@ -213,5 +211,13 @@ a:hover {
 /* .slide-fade-leave-active below version 2.1.8 */ {
   transform: translateX(10px);
   opacity: 0;
+}
+
+/* firefox */
+@-moz-document url-prefix() { 
+  #detailScreen {
+    scrollbar-width: thin;
+    width: calc(100% + 10px);
+  }
 }
 </style>

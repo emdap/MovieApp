@@ -73,8 +73,6 @@ export default {
   overflow-y: scroll;
   overflow-x: hidden;
   -webkit-overflow-scrolling: touch;
-  /* for firefox */
-  scrollbar-width: thin;
   z-index: 2;
   top: 2.5rem;
   left: 0;
@@ -96,6 +94,13 @@ export default {
   margin-top: 10px;
   font-weight: bold;
   color: grey;
+}
+
+@-moz-document url-prefix() { 
+  #posterHolder {
+    scrollbar-width: thin;
+    width: calc(100% + 10px);
+  }
 }
 
 </style>

@@ -112,16 +112,17 @@ export default {
 }
 
 #app {
+  position: absolute;
   width: 100%;
-  height: 100%;
+  height: 100vh;
   /*max-width: 800px;*/
   overflow: hidden;
   background-color: rgb(33, 33, 33);
 }
 
 ::-webkit-scrollbar {
-    width: 0px;
-    background: transparent; /* make scrollbar transparent */
+  width: 0px;
+  background: transparent; /* make scrollbar transparent */
 }
 
 /* for landscape mode x*/
